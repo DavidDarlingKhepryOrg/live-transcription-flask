@@ -1,17 +1,23 @@
-from flask import Flask, render_template
-from deepgram import Deepgram
-from dotenv import load_dotenv
 import os
 import asyncio
+
+from environs import Env
+
+from flask import Flask, render_template
+
+from deepgram import Deepgram
+from dotenv import load_dotenv
 from aiohttp import web
 from aiohttp_wsgi import WSGIHandler
 
 from typing import Dict, Callable
 
-
 load_dotenv()
 
 app = Flask('aioflask')
+
+# os.environ['DEEPGRAM_API_KEY'] = '13ee81067e9b56c2a48c63ea6f40a00da9ff09d9'
+print(f"os.environ['DEEPGRAM_API_KEY']: {os.environ['DEEPGRAM_API_KEY']}")
 
 dg_client = Deepgram(os.getenv('DEEPGRAM_API_KEY'))
 
@@ -59,4 +65,4 @@ if __name__ == "__main__":
     wsgi = WSGIHandler(app)
     aio_app.router.add_route('*', '/{path_info: *}', wsgi.handle_request)
     aio_app.router.add_route('GET', '/listen', socket)
-    web.run_app(aio_app, port=5555)
+    web.run_app(aio_app, host="127.0.0.1", port=5555)
